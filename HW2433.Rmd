@@ -1,0 +1,38 @@
+---
+title: "Stat433HW2"
+author: "Taran Katta"
+date: "9/28/2021"
+output: github_document
+---
+
+1)
+```{r comment = NA}
+install.packages("nycflights13")
+install.packages("ggplot2")
+library(nycflights13)
+library(ggplot2)
+library(dplyr)
+
+missingdep_time = sum(is.na(flights$dep_time))
+cat("Number of missing dep_time values:", missingdep_time)
+
+filter(flights, is.na(dep_time))
+print("Dep_delay, arr_time, arr_delay, and air_time are also missing. This represents the fact that the flights never actually took off and was canceled.")
+
+```
+2)
+```{r comment = NA}
+flights_table = (na.omit(flights))
+new_flights_table = mutate(flights_table,new_dep_time = (dep_time %/% 100)*60 + (dep_time %%100), new_sched_dep_time = (sched_dep_time %/% 100) + (sched_dep_time%%100))
+print(new_flights_table)
+
+```
+3)
+```{r comment = NA}
+flights %>%
+  mutate(canceled_flights = ifelse(!is.na(flights$dep_time),0,1))%>%
+  group_by(day) %>%
+  summarise(Avg_Delay_By_Day = mean(dep_delay,na.rm = TRUE),
+            Prop_Canceled_Flights = mean(canceled_flights)) %>%
+  ggplot(aes(x=Avg_Delay_By_Day,y=Prop_Canceled_Flights)) + geom_point()
+```
